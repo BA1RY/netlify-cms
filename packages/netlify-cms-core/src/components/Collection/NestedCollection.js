@@ -14,7 +14,9 @@ import SortableTree, {
   getFlatDataFromTree,
 } from 'react-sortable-tree/dist/index.esm.js';
 
-const rowContents = css`
+const customStyles = css`
+  font-size: 14px;
+  font-weight: 500;
   .rst__rowContents {
     min-width: 40px;
   }
@@ -97,8 +99,8 @@ class NestedCollection extends React.Component {
       <div
         css={css`
           ${reactSortableTreeStyles}
+          ${customStyles}
           height: ${height}px;
-          ${rowContents}
         `}
       >
         <SortableTree
