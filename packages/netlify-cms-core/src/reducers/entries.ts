@@ -12,6 +12,7 @@ import {
   SORT_ENTRIES_SUCCESS,
   SORT_ENTRIES_FAILURE,
   ENTRIES_PERSIST_SUCCESS,
+  ENTRIES_UPDATE_SUCCESS,
 } from '../actions/entries';
 import { SEARCH_ENTRIES_SUCCESS } from '../actions/search';
 import {
@@ -242,6 +243,7 @@ const entries = (
       return newState;
     }
 
+    case ENTRIES_UPDATE_SUCCESS:
     case ENTRIES_PERSIST_SUCCESS: {
       const payload = action.payload as EntriesPersistSuccessPayload;
       const { entries } = payload;
