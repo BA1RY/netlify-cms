@@ -141,6 +141,14 @@ const getConfigSchema = () => ({
               type: 'string',
             },
           },
+          nested: {
+            oneOf: [
+              { type: 'boolean' },
+              {
+                type: 'string',
+              },
+            ],
+          },
         },
         required: ['name', 'label'],
         oneOf: [{ required: ['files'] }, { required: ['folder', 'fields'] }],

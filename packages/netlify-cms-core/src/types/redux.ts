@@ -157,6 +157,7 @@ type CollectionObject = {
   label_singular?: string;
   label: string;
   sortableFields: List<string>;
+  nested?: string;
 };
 
 export type Collection = StaticallyTypedRecord<CollectionObject>;
