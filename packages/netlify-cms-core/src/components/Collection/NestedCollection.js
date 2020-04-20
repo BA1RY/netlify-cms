@@ -22,11 +22,23 @@ const customStyles = css`
   }
 `;
 
+const getKeyField = collection => {
+  const keyField = collection.getIn(['nested', 'keyField']);
+  return keyField;
+};
+
+const getParentKey = collection => {
+  const keyField = collection.getIn(['nested', 'parentField']);
+  return keyField;
+};
+
 const getRootId = collection => `NETLIFY_CMS_${collection.get('name').toUpperCase()}_ID`;
-const getKey = node => node.path;
+const getKey = (node, key) => get(node, key);
 
 const getTreeData = (collection, entries, expanded) => {
-  const parentKey = collection.get('nested');
+  const keyField = getKeyField(collection);
+  const parentField = getParentKey(collection);
+
   const rootKey = 'NETLIFY_CMS_ROOT_COLLECTION';
   const rootId = getRootId(collection);
   const flatData = [
@@ -35,9 +47,9 @@ const getTreeData = (collection, entries, expanded) => {
   ];
   const treeData = getTreeFromFlatData({
     flatData,
-    getKey,
+    getKey: node => getKey(node, keyField),
     getParentKey: item => {
-      const parent = get(item, ['data', parentKey]);
+      const parent = get(item, ['data', parentField]);
       if (parent) {
         return join(parent);
       }
@@ -49,15 +61,17 @@ const getTreeData = (collection, entries, expanded) => {
 };
 
 const getEntriesData = (collection, treeData) => {
-  const parentKey = collection.get('nested');
+  const keyField = getKeyField(collection);
+  const parentField = getParentKey(collection);
+
   const rootId = getRootId(collection);
   return (
-    getFlatDataFromTree({ treeData, getNodeKey: getKey })
+    getFlatDataFromTree({ treeData, getNodeKey: node => getKey(node, keyField) })
       .filter(({ parentNode }) => parentNode)
       // eslint-disable-next-line no-unused-vars
       .map(({ node: { title, children, ...rest }, parentNode: { path: parent } }) => {
         const newParent = parent === rootId ? '' : parent;
-        const newNode = set(rest, ['data', parentKey], newParent);
+        const newNode = set(rest, ['data', parentField], newParent);
         return newNode;
       })
   );
@@ -90,7 +104,7 @@ class NestedCollection extends React.Component {
 
   render() {
     const { collection, entries, isOpenAuthoring } = this.props;
-
+    const keyField = collection.getIn(['nested', 'keyField']);
     const treeData = getTreeData(collection, entries, this.state.expanded);
 
     const rowHeight = 40;
@@ -108,10 +122,9 @@ class NestedCollection extends React.Component {
           rowHeight={rowHeight}
           onChange={this.onChange}
           onMoveNode={this.onMoveNode}
-          getNodeKey={({ node }) => getKey(node)}
+          getNodeKey={({ node }) => getKey(node, keyField)}
           canDrag={({ node }) => (isOpenAuthoring ? false : node.path !== treeData[0].path)}
           canDrop={({ nextParent }) => (isOpenAuthoring ? false : nextParent !== null)}
-          isVirtualized={false}
         />
       </div>
     );

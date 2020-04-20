@@ -143,9 +143,21 @@ const getConfigSchema = () => ({
           },
           nested: {
             oneOf: [
-              { type: 'boolean' },
               {
-                type: 'string',
+                type: 'object',
+                properties: {
+                  keyField: { type: 'string' },
+                  parentField: { type: 'string' },
+                  mode: { type: 'string', enum: ['field_based'] },
+                },
+                required: ['keyField', 'parentField', 'mode'],
+              },
+              {
+                type: 'object',
+                properties: {
+                  mode: { type: 'string', enum: ['directory_based'] },
+                },
+                required: ['mode'],
               },
             ],
           },
