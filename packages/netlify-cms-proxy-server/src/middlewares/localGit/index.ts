@@ -345,10 +345,7 @@ export const localGitMiddleware = ({ repoPath }: Options) => {
           break;
         }
         case 'persistEntries': {
-          const {
-            entries,
-            options: { commitMessage },
-          } = body.params as PersistEntriesParams;
+          const { entries, commitMessage } = body.params as PersistEntriesParams;
           await runOnBranch(git, branch, async () => {
             await commitEntries(git, repoPath, entries, commitMessage);
           });

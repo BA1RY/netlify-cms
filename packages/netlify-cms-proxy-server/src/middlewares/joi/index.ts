@@ -118,9 +118,7 @@ export const defaultSchema = ({ path = requiredString } = {}) => {
             entries: Joi.array()
               .items(entry)
               .required(),
-            options: Joi.object({
-              commitMessage: requiredString,
-            }).required(),
+            commitMessage: requiredString,
           })
           .required(),
       },

@@ -300,18 +300,7 @@ describe('defaultSchema', () => {
             entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
           },
         }),
-        '"params.options" is required',
-      );
-      assetFailure(
-        schema.validate({
-          action: 'persistEntries',
-          params: {
-            ...defaultParams,
-            entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
-            options: {},
-          },
-        }),
-        '"params.options.commitMessage" is required',
+        '"params.commitMessage" is required',
       );
     });
 

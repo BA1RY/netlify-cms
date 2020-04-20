@@ -49,9 +49,7 @@ export type PersistEntryParams = {
 
 export type PersistEntriesParams = {
   entries: Entry[];
-  options: {
-    commitMessage: string;
-  };
+  commitMessage: string;
 };
 
 export type GetMediaParams = {
