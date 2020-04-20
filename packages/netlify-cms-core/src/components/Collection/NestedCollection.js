@@ -54,7 +54,7 @@ const getEntriesData = (collection, treeData) => {
       .filter(({ parentNode }) => parentNode)
       // eslint-disable-next-line no-unused-vars
       .map(({ node: { title, children, ...rest }, parentNode: { path: parent } }) => {
-        const newParent = parent === rootId ? undefined : parent;
+        const newParent = parent === rootId ? '' : parent;
         const newNode = set(rest, ['data', parentKey], newParent);
         return newNode;
       })

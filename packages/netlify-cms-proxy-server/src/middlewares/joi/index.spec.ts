@@ -311,9 +311,7 @@ describe('defaultSchema', () => {
         params: {
           ...defaultParams,
           entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
-          options: {
-            commitMessage: 'commitMessage',
-          },
+          commitMessage: 'commitMessage',
         },
       });
 
