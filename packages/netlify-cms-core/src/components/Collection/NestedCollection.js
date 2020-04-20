@@ -87,7 +87,7 @@ class NestedCollection extends React.Component {
   };
 
   render() {
-    const { collection, entries } = this.props;
+    const { collection, entries, isOpenAuthoring } = this.props;
 
     const treeData = getTreeData(collection, entries, this.state.expanded);
 
@@ -107,8 +107,8 @@ class NestedCollection extends React.Component {
           onChange={this.onChange}
           onMoveNode={this.onMoveNode}
           getNodeKey={({ node }) => getKey(node)}
-          canDrag={({ node }) => node.path !== treeData[0].path}
-          canDrop={({ nextParent }) => nextParent !== null}
+          canDrag={({ node }) => (isOpenAuthoring ? false : node.path !== treeData[0].path)}
+          canDrop={({ nextParent }) => (isOpenAuthoring ? false : nextParent !== null)}
           isVirtualized={false}
         />
       </div>
@@ -118,8 +118,9 @@ class NestedCollection extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   const { collection } = ownProps;
+  const isOpenAuthoring = state.globalUI.get('useOpenAuthoring', false);
   const entries = selectEntries(state.entries, collection.get('name')) || List();
-  return { entries };
+  return { entries, isOpenAuthoring };
 }
 
 const mapDispatchToProps = {

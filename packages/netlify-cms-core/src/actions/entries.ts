@@ -857,10 +857,14 @@ export function updateEntries(collection: Collection, entries: EntryValue[]) {
   };
 }
 
-export function persistEntries(collection: Collection, entries: EntryValue[], local: boolean) {
+export function persistEntries(collection: Collection, entries: EntryValue[]) {
   return async (dispatch: ThunkDispatch<State, {}, AnyAction>, getState: () => State) => {
     try {
       dispatch(entriesPersisting(collection));
+      const state = getState();
+      const backend = currentBackend(state.config);
+
+      await backend.persistEntries(collection, entries);
       dispatch(
         notifSend({
           message: {

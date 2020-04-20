@@ -26,7 +26,7 @@ describe('defaultSchema', () => {
 
     assetFailure(
       schema.validate({ action: 'unknown', params: {} }),
-      '"action" must be one of [info, entriesByFolder, entriesByFiles, getEntry, unpublishedEntries, unpublishedEntry, deleteUnpublishedEntry, persistEntry, updateUnpublishedEntryStatus, publishUnpublishedEntry, getMedia, getMediaFile, persistMedia, deleteFile, getDeployPreview]',
+      '"action" must be one of [info, entriesByFolder, entriesByFiles, getEntry, unpublishedEntries, unpublishedEntry, deleteUnpublishedEntry, persistEntry, persistEntries, updateUnpublishedEntryStatus, publishUnpublishedEntry, getMedia, getMediaFile, persistMedia, deleteFile, getDeployPreview]',
     );
   });
 
@@ -276,6 +276,54 @@ describe('defaultSchema', () => {
             commitMessage: 'commitMessage',
             useWorkflow: true,
             status: 'draft',
+          },
+        },
+      });
+
+      expect(error).toBeUndefined();
+    });
+  });
+
+  describe('persistEntries', () => {
+    it('should fail on invalid params', () => {
+      const schema = defaultSchema();
+
+      assetFailure(
+        schema.validate({ action: 'persistEntries', params: { ...defaultParams } }),
+        '"params.entries" is required',
+      );
+      assetFailure(
+        schema.validate({
+          action: 'persistEntries',
+          params: {
+            ...defaultParams,
+            entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
+          },
+        }),
+        '"params.options" is required',
+      );
+      assetFailure(
+        schema.validate({
+          action: 'persistEntries',
+          params: {
+            ...defaultParams,
+            entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
+            options: {},
+          },
+        }),
+        '"params.options.commitMessage" is required',
+      );
+    });
+
+    it('should pass on valid params', () => {
+      const schema = defaultSchema();
+      const { error } = schema.validate({
+        action: 'persistEntries',
+        params: {
+          ...defaultParams,
+          entries: [{ slug: 'slug', path: 'path', raw: 'content' }],
+          options: {
+            commitMessage: 'commitMessage',
           },
         },
       });

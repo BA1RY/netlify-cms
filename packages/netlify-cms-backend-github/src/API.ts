@@ -956,6 +956,19 @@ export default class API {
     }
   }
 
+  async persistEntries(entries: Entry[], commitMessage: string) {
+    const uploadPromises = entries.map(file => this.uploadBlob(file));
+    await Promise.all(uploadPromises);
+    const branchData = await this.getDefaultBranch();
+    const changeTree = await this.updateTree(
+      branchData.commit.sha,
+      entries as { sha: string; path: string }[],
+    );
+    const commit = await this.commit(commitMessage, changeTree);
+    const result = await this.patchBranch(this.branch, commit.sha);
+    return result;
+  }
+
   async getFileSha(path: string, { repoURL = this.repoURL, branch = this.branch } = {}) {
     /**
      * We need to request the tree first to get the SHA. We use extended SHA-1

@@ -47,6 +47,13 @@ export type PersistEntryParams = {
   };
 };
 
+export type PersistEntriesParams = {
+  entries: Entry[];
+  options: {
+    commitMessage: string;
+  };
+};
+
 export type GetMediaParams = {
   mediaFolder: string;
 };

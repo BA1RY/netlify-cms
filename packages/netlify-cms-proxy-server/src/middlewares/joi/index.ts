@@ -10,6 +10,7 @@ const allowedActions = [
   'unpublishedEntry',
   'deleteUnpublishedEntry',
   'persistEntry',
+  'persistEntries',
   'updateUnpublishedEntryStatus',
   'publishUnpublishedEntry',
   'getMedia',
@@ -36,6 +37,8 @@ export const defaultSchema = ({ path = requiredString } = {}) => {
     content: requiredString,
     encoding: requiredString.valid('base64'),
   });
+
+  const entry = Joi.object({ slug: requiredString, path, raw: requiredString }).required();
 
   const params = Joi.when('action', {
     switch: [
@@ -95,7 +98,7 @@ export const defaultSchema = ({ path = requiredString } = {}) => {
         is: 'persistEntry',
         then: defaultParams
           .keys({
-            entry: Joi.object({ slug: requiredString, path, raw: requiredString }).required(),
+            entry,
             assets: Joi.array()
               .items(asset)
               .required(),
@@ -104,6 +107,19 @@ export const defaultSchema = ({ path = requiredString } = {}) => {
               commitMessage: requiredString,
               useWorkflow: requiredBool,
               status: requiredString,
+            }).required(),
+          })
+          .required(),
+      },
+      {
+        is: 'persistEntries',
+        then: defaultParams
+          .keys({
+            entries: Joi.array()
+              .items(entry)
+              .required(),
+            options: Joi.object({
+              commitMessage: requiredString,
             }).required(),
           })
           .required(),

@@ -271,6 +271,12 @@ export default class TestBackend implements Implementation {
     return Promise.resolve();
   }
 
+  async persistEntries(entries: Entry[], commitMessage: string) {
+    for (const entry of entries) {
+      await this.persistEntry(entry, [], { commitMessage });
+    }
+  }
+
   updateUnpublishedEntryStatus(collection: string, slug: string, newStatus: string) {
     const unpubStore = window.repoFilesUnpublished;
     const entryIndex = unpubStore.findIndex(

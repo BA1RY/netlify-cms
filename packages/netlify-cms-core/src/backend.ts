@@ -933,6 +933,20 @@ export class Backend {
       return fieldValue === filterRule.get('value');
     });
   }
+
+  async persistEntries(collection: Collection, entries: EntryValue[]) {
+    const entriesObjects = entries.map(entry => {
+      const { path, slug } = entry;
+      const entryObj = {
+        path,
+        slug,
+        raw: this.entryToRaw(collection, fromJS(entry)),
+      };
+      return entryObj;
+    });
+    const commitMessage = 'Updating entries';
+    await this.implementation.persistEntries(entriesObjects, commitMessage);
+  }
 }
 
 export function resolveBackend(config: Config) {

@@ -454,6 +454,11 @@ export default class API {
     }
   }
 
+  async persistEntries(entries: Entry[], commitMessage: string) {
+    const response = await this.uploadFiles(entries, { commitMessage, branch: this.branch });
+    return response;
+  }
+
   async addPullRequestComment(pullRequest: BitBucketPullRequest, comment: string) {
     await this.requestJSON({
       method: 'POST',

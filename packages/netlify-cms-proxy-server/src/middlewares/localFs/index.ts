@@ -11,6 +11,7 @@ import {
   GetMediaFileParams,
   PersistMediaParams,
   DeleteFileParams,
+  PersistEntriesParams,
 } from '../types';
 import { listRepoFiles, deleteFile, writeFile } from '../utils/fs';
 import { entriesFromFiles, readMediaFile } from '../utils/entries';
@@ -68,6 +69,15 @@ export const localFsMiddleware = ({ repoPath }: Options) => {
             ),
           );
           res.json({ message: 'entry persisted' });
+          break;
+        }
+        case 'persistEntries': {
+          const { entries } = body.params as PersistEntriesParams;
+          // save assets
+          await Promise.all(
+            entries.map(entry => writeFile(path.join(repoPath, entry.path), entry.raw)),
+          );
+          res.json({ message: 'entries persisted' });
           break;
         }
         case 'getMedia': {

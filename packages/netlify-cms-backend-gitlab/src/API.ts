@@ -466,6 +466,12 @@ export default class API {
     }
   }
 
+  async persistEntries(entries: Entry[], commitMessage: string) {
+    const items = await this.getCommitItems(entries, this.branch);
+    const response = await this.uploadAndCommit(items, { commitMessage });
+    return response;
+  }
+
   deleteFile = (path: string, commitMessage: string) => {
     const branch = this.branch;
     // eslint-disable-next-line @typescript-eslint/camelcase

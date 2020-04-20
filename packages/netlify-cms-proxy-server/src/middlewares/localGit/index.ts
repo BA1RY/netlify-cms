@@ -27,6 +27,7 @@ import {
   UpdateUnpublishedEntryStatusParams,
   Entry,
   GetMediaFileParams,
+  PersistEntriesParams,
 } from '../types';
 // eslint-disable-next-line import/default
 import simpleGit from 'simple-git/promise';
@@ -140,6 +141,16 @@ const commitEntry = async (
   );
   // commits files
   await commit(git, commitMessage, [entry.path, ...assets.map(a => a.path)]);
+};
+
+const commitEntries = async (
+  git: simpleGit.SimpleGit,
+  repoPath: string,
+  entries: Entry[],
+  commitMessage: string,
+) => {
+  await Promise.all(entries.map(entry => writeFile(path.join(repoPath, entry.path), entry.raw)));
+  await commit(git, commitMessage, [...entries.map(entry => entry.path)]);
 };
 
 const rebase = async (git: simpleGit.SimpleGit, branch: string) => {
@@ -290,7 +301,7 @@ export const localGitMiddleware = ({ repoPath }: Options) => {
         case 'persistEntry': {
           const { entry, assets, options } = body.params as PersistEntryParams;
           if (!options.useWorkflow) {
-            runOnBranch(git, branch, async () => {
+            await runOnBranch(git, branch, async () => {
               await commitEntry(git, repoPath, entry, assets, options.commitMessage);
             });
           } else {
@@ -331,6 +342,17 @@ export const localGitMiddleware = ({ repoPath }: Options) => {
             });
           }
           res.json({ message: 'entry persisted' });
+          break;
+        }
+        case 'persistEntries': {
+          const {
+            entries,
+            options: { commitMessage },
+          } = body.params as PersistEntriesParams;
+          await runOnBranch(git, branch, async () => {
+            await commitEntries(git, repoPath, entries, commitMessage);
+          });
+          res.json({ message: 'entries persisted' });
           break;
         }
         case 'updateUnpublishedEntryStatus': {

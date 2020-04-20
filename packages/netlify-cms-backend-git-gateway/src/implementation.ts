@@ -424,6 +424,10 @@ export default class GitGateway implements Implementation {
     );
   }
 
+  persistEntries(entries: Entry[], commitMessage: string) {
+    return this.backend!.persistEntries(entries, commitMessage);
+  }
+
   async persistMedia(mediaFile: AssetProxy, options: PersistOptions) {
     const { fileObj, path } = mediaFile;
     const displayURL = URL.createObjectURL(fileObj);

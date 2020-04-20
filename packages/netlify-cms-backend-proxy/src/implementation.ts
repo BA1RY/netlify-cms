@@ -162,6 +162,17 @@ export default class ProxyBackend implements Implementation {
     });
   }
 
+  async persistEntries(entries: Entry[], commitMessage: string) {
+    return this.request({
+      action: 'persistEntries',
+      params: {
+        branch: this.branch,
+        entries,
+        commitMessage,
+      },
+    });
+  }
+
   updateUnpublishedEntryStatus(collection: string, slug: string, newStatus: string) {
     return this.request({
       action: 'updateUnpublishedEntryStatus',
