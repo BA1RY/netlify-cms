@@ -11,6 +11,7 @@ import {
   SORT_ENTRIES_REQUEST,
   SORT_ENTRIES_SUCCESS,
   SORT_ENTRIES_FAILURE,
+  ENTRIES_PERSIST_SUCCESS,
 } from '../actions/entries';
 import { SEARCH_ENTRIES_SUCCESS } from '../actions/search';
 import {
@@ -36,6 +37,7 @@ import {
   SortObject,
   Sort,
   SortDirection,
+  EntriesPersistSuccessPayload,
 } from '../types/redux';
 import { folderFormatter } from '../lib/formatters';
 import { isAbsolutePath, basename } from 'netlify-cms-lib-util';
@@ -237,6 +239,21 @@ const entries = (
         map.setIn(['pages', collection, 'isFetching'], false);
       });
       persistSort(newState.get('sort') as Sort);
+      return newState;
+    }
+
+    case ENTRIES_PERSIST_SUCCESS: {
+      const payload = action.payload as EntriesPersistSuccessPayload;
+      const { entries } = payload;
+      loadedEntries = entries;
+      const newState = state.withMutations(map => {
+        loadedEntries.forEach(entry =>
+          map.setIn(
+            ['entities', `${entry.collection}.${entry.slug}`],
+            fromJS(entry).set('isFetching', false),
+          ),
+        );
+      });
       return newState;
     }
 
